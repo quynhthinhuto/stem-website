@@ -62,41 +62,37 @@ export default defineConfig(async ({ command }) => {
         : {}),
     },
     plugins: [
-      vinext(),
-      nitro(),
-      sites({ mockAuth: !managedLinux }),
-      connectorPreview(),
-      cloudflare({
-        viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
-        inspectorPort: false,
-        config: {
-          ...localBindingConfig,
-          ...(command === "serve"
-            ? {
-                services: [
-                  {
-                    binding: "CONNECTORS",
-                    service: "sites-connector-preview",
-                    entrypoint: "ConnectorPreview",
-                  },
-                ],
-              }
-            : {}),
-        },
-        ...(command === "serve"
-          ? {
-              auxiliaryWorkers: [
-                {
-                  config: {
-                    name: "sites-connector-preview",
-                    main: "./build/connector-preview-worker.mjs",
-                    compatibility_date: "2026-05-15",
-                  },
-                },
-              ],
-            }
-          : {}),
-      }),
-    ],
+  vinext(),
+  nitro(),
+  ...(command === "serve"
+    ? [
+        sites({ mockAuth: !managedLinux }),
+        connectorPreview(),
+        cloudflare({
+          viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
+          inspectorPort: false,
+          config: {
+            ...localBindingConfig,
+            services: [
+              {
+                binding: "CONNECTORS",
+                service: "sites-connector-preview",
+                entrypoint: "ConnectorPreview",
+              },
+            ],
+          },
+          auxiliaryWorkers: [
+            {
+              config: {
+                name: "sites-connector-preview",
+                main: "./build/connector-preview-worker.mjs",
+                compatibility_date: "2026-05-15",
+              },
+            },
+          ],
+        }),
+      ]
+    : []),
+],
   };
 });
