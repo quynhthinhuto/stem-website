@@ -1,5 +1,6 @@
 import vinext from "vinext";
 import { nitro } from "nitro/vite";
+import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import hostingConfig from "./.openai/hosting.json";
 import { readExecutionProfile } from "./scripts/execution-profile.mjs";
@@ -64,6 +65,7 @@ export default defineConfig(async ({ command }) => {
     plugins: [
   vinext(),
   nitro(),
+  tailwindcss(),
   ...(command === "serve"
     ? [
         sites({ mockAuth: !managedLinux }),
